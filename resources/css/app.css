@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Paleta ArStock: ledger/almacén — tinta profunda + verde de "stock sano" */
+    --color-ink-950: #0f1b2d;
+    --color-ink-900: #14213d;
+    --color-ink-800: #1c2d4f;
+    --color-ink-700: #2a3f66;
+
+    --color-brand-600: #2f6d4f;
+    --color-brand-500: #3a8362;
+    --color-brand-100: #e3efe8;
+
+    --color-warn-600: #b8790a;
+    --color-warn-100: #fbecd2;
+
+    --color-crit-600: #b3392a;
+    --color-crit-100: #fbe4e0;
+
+    --color-paper: #faf9f6;
+}
