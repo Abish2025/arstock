@@ -30,7 +30,12 @@ class ProductoController extends Controller
         // withQueryString() = mantiene el filtro "buscar" al cambiar de página
         $productos = $query->paginate(10)->withQueryString();
 
-        return view('productos.index', compact('productos'));
+        // Métricas de inventario para las tarjetas superiores
+        $totalProductos = Producto::count();
+        $stockBajo = Producto::whereColumn('stock', '<=', 'stock_minimo')->count();
+        $valorInventario = Producto::selectRaw('COALESCE(SUM(stock * precio_compra), 0) as total')->value('total') ?? 0;
+
+        return view('productos.index', compact('productos', 'totalProductos', 'stockBajo', 'valorInventario'));
     }
 
     // GET /productos/create → muestra el formulario de carga

@@ -1,89 +1,147 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'ArStock' }}</title>
+    <title>{{ $title ?? 'ArStock - Sistema de Gestión' }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Chart.js para gráficos interactivos del Dashboard --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-paper text-ink-950 antialiased">
+<body class="h-full bg-slate-50 text-slate-800 font-sans antialiased">
 
-    <div class="lg:flex lg:min-h-screen">
+    <div class="min-h-screen flex flex-col lg:flex-row">
 
-        {{-- Barra lateral --}}
-        <aside class="bg-ink-900 text-white lg:w-64 lg:shrink-0 lg:min-h-screen">
-            <div class="flex items-center justify-between px-5 py-5 lg:block">
-                <a href="{{ route('productos.index') }}" class="flex items-center gap-2">
-                    <span class="flex h-8 w-8 items-center justify-center rounded-md bg-brand-500 text-sm font-semibold">Ar</span>
-                    <span class="text-lg font-semibold tracking-tight">ArStock</span>
-                </a>
+        {{-- Barra lateral (Sidebar) --}}
+        <aside class="w-full lg:w-64 bg-[#0a0e1a] text-white flex flex-col justify-between shrink-0 border-r border-slate-800/60 shadow-xl">
+            <div>
+                {{-- Encabezado del Sistema --}}
+                <div class="px-6 py-6 border-b border-slate-800/80 flex items-center justify-between">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
+                        <div class="h-9 w-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 font-bold text-base tracking-wide">
+                            AR
+                        </div>
+                        <div>
+                            <span class="text-base font-bold tracking-tight text-white block leading-tight">ArStock</span>
+                            <span class="text-[11px] font-medium text-slate-400">Sistema de Gestión</span>
+                        </div>
+                    </a>
+                </div>
+
+                {{-- Navegación --}}
+                <nav class="p-4 space-y-1.5">
+                    {{-- Dashboard --}}
+                    <a href="{{ route('dashboard') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+                              {{ request()->routeIs('dashboard') ? 'bg-slate-800/90 text-white shadow-sm ring-1 ring-white/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/40' }}">
+                        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+                        </svg>
+                        Dashboard
+                    </a>
+
+                    {{-- Productos --}}
+                    <a href="{{ route('productos.index') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+                              {{ request()->routeIs('productos.*') ? 'bg-slate-800/90 text-white shadow-sm ring-1 ring-white/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/40' }}">
+                        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+                        </svg>
+                        Productos
+                    </a>
+
+                    {{-- Clientes --}}
+                    <a href="#"
+                       class="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40 transition-all duration-150 group">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            Clientes
+                        </div>
+                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50">Pronto</span>
+                    </a>
+
+                    {{-- Ventas --}}
+                    <a href="#"
+                       class="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40 transition-all duration-150 group">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+                            </svg>
+                            Ventas
+                        </div>
+                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50">Pronto</span>
+                    </a>
+
+                    {{-- Proveedores --}}
+                    <a href="#"
+                       class="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40 transition-all duration-150 group">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>
+                            </svg>
+                            Proveedores
+                        </div>
+                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50">Pronto</span>
+                    </a>
+
+                    {{-- Reportes --}}
+                    <a href="#"
+                       class="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40 transition-all duration-150 group">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+                            </svg>
+                            Reportes
+                        </div>
+                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50">Pronto</span>
+                    </a>
+                </nav>
             </div>
 
-            <nav class="px-3 pb-6 lg:pb-0">
-                <p class="px-2 pt-2 pb-1 text-xs font-medium text-white/40">Inventario</p>
-                <a href="{{ route('productos.index') }}"
-                   class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition
-                          {{ request()->routeIs('productos.*') ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white' }}">
-                    <svg class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6.5 10 3l7 3.5M3 6.5v7L10 17l7-3.5v-7M3 6.5 10 10m0 0 7-3.5M10 10v7"/></svg>
-                    Productos
-                </a>
-
-                <p class="px-2 pt-5 pb-1 text-xs font-medium text-white/40">Ventas y clientes</p>
-                <span class="flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-white/30 cursor-not-allowed">
-                    <span class="flex items-center gap-3">
-                        <svg class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h2l1 9.5a1.5 1.5 0 0 0 1.5 1.5h6.4a1.5 1.5 0 0 0 1.48-1.24L17 7H6"/><circle cx="8" cy="17" r="1"/><circle cx="14" cy="17" r="1"/></svg>
-                        Ventas del día
-                    </span>
-                    <span class="rounded-full border border-white/15 px-1.5 py-0.5 text-[10px]">pronto</span>
-                </span>
-                <span class="flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-white/30 cursor-not-allowed">
-                    <span class="flex items-center gap-3">
-                        <svg class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5"/></svg>
-                        Clientes / fiado
-                    </span>
-                    <span class="rounded-full border border-white/15 px-1.5 py-0.5 text-[10px]">pronto</span>
-                </span>
-
-                <p class="px-2 pt-5 pb-1 text-xs font-medium text-white/40">Negocio</p>
-                <span class="flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-white/30 cursor-not-allowed">
-                    <span class="flex items-center gap-3">
-                        <svg class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4v12h12"/><path d="M7 13l2.5-3 2 2L15 8"/></svg>
-                        Reportes
-                    </span>
-                    <span class="rounded-full border border-white/15 px-1.5 py-0.5 text-[10px]">pronto</span>
-                </span>
-                <span class="flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm text-white/30 cursor-not-allowed">
-                    <span class="flex items-center gap-3">
-                        <svg class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15l3-8 3 5 2-3 4 6"/></svg>
-                        Proveedores
-                    </span>
-                    <span class="rounded-full border border-white/15 px-1.5 py-0.5 text-[10px]">pronto</span>
-                </span>
-            </nav>
+            {{-- Pie del Sidebar / Cerrar Sesión --}}
+            <div class="p-4 border-t border-slate-800/80">
+                <button type="button" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-150">
+                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>
+                    </svg>
+                    Cerrar Sesión
+                </button>
+            </div>
         </aside>
 
-        {{-- Contenido --}}
-        <div class="flex-1 min-w-0">
-            <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-10">
+        {{-- Área Principal de Contenido --}}
+        <main class="flex-1 min-w-0 overflow-y-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+                {{-- Notificaciones / Alertas --}}
                 @if (session('success'))
-                    <div class="mb-6 flex items-start gap-3 rounded-md border border-brand-500/30 bg-brand-100 px-4 py-3 text-sm text-brand-600">
-                        <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-9"/></svg>
-                        <span>{{ session('success') }}</span>
+                    <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-50/80 p-4 text-sm text-emerald-800 shadow-sm animate-in fade-in duration-200">
+                        <svg class="h-5 w-5 text-emerald-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">{{ session('success') }}</span>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="mb-6 flex items-start gap-3 rounded-md border border-crit-600/30 bg-crit-100 px-4 py-3 text-sm text-crit-600">
-                        <svg class="mt-0.5 h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 6v5m0 3h.01M10 2l8 15H2z"/></svg>
-                        <span>{{ session('error') }}</span>
+                    <div class="mb-6 flex items-center gap-3 rounded-xl border border-rose-500/20 bg-rose-50/80 p-4 text-sm text-rose-800 shadow-sm animate-in fade-in duration-200">
+                        <svg class="h-5 w-5 text-rose-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">{{ session('error') }}</span>
                     </div>
                 @endif
 
                 @yield('content')
 
-            </main>
-        </div>
+            </div>
+        </main>
+
     </div>
 
 </body>

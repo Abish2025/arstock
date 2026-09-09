@@ -1,36 +1,36 @@
 @php
-    $campo = 'w-full rounded-md border border-ink-950/15 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500';
-    $campoError = 'w-full rounded-md border border-crit-600/50 bg-white px-3 py-2 text-sm focus:border-crit-600 focus:outline-none focus:ring-1 focus:ring-crit-600';
-    $etiqueta = 'mb-1.5 block text-sm font-medium text-ink-950/80';
+    $campo = 'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all';
+    $campoError = 'w-full rounded-xl border border-rose-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500 transition-all';
+    $etiqueta = 'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-600';
 @endphp
 
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 
     <div>
-        <label class="{{ $etiqueta }}">Código</label>
-        <input type="text" name="codigo" value="{{ old('codigo', $producto->codigo ?? '') }}"
+        <label class="{{ $etiqueta }}">Código / SKU</label>
+        <input type="text" name="codigo" value="{{ old('codigo', $producto->codigo ?? '') }}" placeholder="Ej: PRD-001"
                class="{{ $errors->has('codigo') ? $campoError : $campo }}">
-        @error('codigo') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+        @error('codigo') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
-        <label class="{{ $etiqueta }}">Nombre</label>
-        <input type="text" name="nombre" value="{{ old('nombre', $producto->nombre ?? '') }}"
+        <label class="{{ $etiqueta }}">Nombre del producto</label>
+        <input type="text" name="nombre" value="{{ old('nombre', $producto->nombre ?? '') }}" placeholder="Ej: Arroz 1kg"
                class="{{ $errors->has('nombre') ? $campoError : $campo }}">
-        @error('nombre') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+        @error('nombre') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
     <div class="sm:col-span-2">
-        <label class="{{ $etiqueta }}">Descripción</label>
-        <textarea name="descripcion" rows="2"
+        <label class="{{ $etiqueta }}">Descripción (Opcional)</label>
+        <textarea name="descripcion" rows="2" placeholder="Detalles adicionales del producto..."
                   class="{{ $errors->has('descripcion') ? $campoError : $campo }}">{{ old('descripcion', $producto->descripcion ?? '') }}</textarea>
-        @error('descripcion') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+        @error('descripcion') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
         <label class="{{ $etiqueta }}">Categoría</label>
         <select name="id_categoria" class="{{ $errors->has('id_categoria') ? $campoError : $campo }}">
-            <option value="">Sin categoría</option>
+            <option value="">Sin categoría asignada</option>
             @foreach ($categorias as $categoria)
                 <option value="{{ $categoria->id_categoria }}"
                     @selected(old('id_categoria', $producto->id_categoria ?? '') == $categoria->id_categoria)>
@@ -38,7 +38,7 @@
                 </option>
             @endforeach
         </select>
-        @error('id_categoria') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+        @error('id_categoria') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
     <div></div>
@@ -46,46 +46,46 @@
     <div>
         <label class="{{ $etiqueta }}">Precio de compra</label>
         <div class="relative">
-            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-950/40">$</span>
-            <input type="number" step="0.01" name="precio_compra" value="{{ old('precio_compra', $producto->precio_compra ?? '') }}"
-                   class="{{ $errors->has('precio_compra') ? $campoError : $campo }} pl-6">
+            <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">$</span>
+            <input type="number" step="0.01" name="precio_compra" value="{{ old('precio_compra', $producto->precio_compra ?? '') }}" placeholder="0.00"
+                   class="{{ $errors->has('precio_compra') ? $campoError : $campo }} pl-8">
         </div>
-        @error('precio_compra') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+        @error('precio_compra') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
     <div>
         <label class="{{ $etiqueta }}">Precio de venta</label>
         <div class="relative">
-            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-950/40">$</span>
-            <input type="number" step="0.01" name="precio_venta" value="{{ old('precio_venta', $producto->precio_venta ?? '') }}"
-                   class="{{ $errors->has('precio_venta') ? $campoError : $campo }} pl-6">
+            <span class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-400">$</span>
+            <input type="number" step="0.01" name="precio_venta" value="{{ old('precio_venta', $producto->precio_venta ?? '') }}" placeholder="0.00"
+                   class="{{ $errors->has('precio_venta') ? $campoError : $campo }} pl-8">
         </div>
-        @error('precio_venta') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+        @error('precio_venta') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
-    <div class="sm:col-span-2 mt-2 border-t border-ink-950/10 pt-5">
-        <p class="mb-3 text-sm font-medium text-ink-950/80">Niveles de stock</p>
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+    <div class="sm:col-span-2 mt-2 rounded-xl bg-slate-50/70 p-5 border border-slate-100">
+        <p class="mb-4 text-xs font-bold uppercase tracking-wider text-slate-700">Control de Niveles de Stock</p>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
                 <label class="{{ $etiqueta }}">Stock actual</label>
                 <input type="number" name="stock" value="{{ old('stock', $producto->stock ?? 0) }}"
                        class="{{ $errors->has('stock') ? $campoError : $campo }}">
-                @error('stock') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+                @error('stock') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="{{ $etiqueta }}">Stock mínimo</label>
+                <label class="{{ $etiqueta }}">Stock mínimo (Alerta)</label>
                 <input type="number" name="stock_minimo" value="{{ old('stock_minimo', $producto->stock_minimo ?? 0) }}"
                        class="{{ $errors->has('stock_minimo') ? $campoError : $campo }}">
-                @error('stock_minimo') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+                @error('stock_minimo') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="{{ $etiqueta }}">Stock crítico</label>
+                <label class="{{ $etiqueta }}">Stock crítico (Urgente)</label>
                 <input type="number" name="stock_critico" value="{{ old('stock_critico', $producto->stock_critico ?? 0) }}"
                        class="{{ $errors->has('stock_critico') ? $campoError : $campo }}">
-                @error('stock_critico') <p class="mt-1 text-xs text-crit-600">{{ $message }}</p> @enderror
+                @error('stock_critico') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
             </div>
         </div>
-        <p class="mt-2 text-xs text-ink-950/50">Cuando el stock baje del mínimo verás una alerta; por debajo del crítico se marca en rojo.</p>
+        <p class="mt-3 text-xs text-slate-500">El sistema marcará en naranja cuando el stock sea menor al mínimo, y en rojo cuando esté por debajo del crítico.</p>
     </div>
 
 </div>
