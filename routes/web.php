@@ -7,31 +7,41 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\Auth\LoginController;
 
-// Dashboard Principal (Pantalla de inicio)
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index']);
+// ─── Rutas Públicas (sin sesión) ───────────────────────────────────────────
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Rutas de Productos (Inventario)
-Route::resource('productos', ProductoController::class)
-     ->parameters(['productos' => 'producto'])
-     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+// ─── Rutas Protegidas (requieren login) ────────────────────────────────────
+Route::middleware('auth')->group(function () {
 
-// Rutas de Clientes y Fiados (Cuentas Corrientes)
-Route::resource('clientes', ClienteController::class)
-     ->parameters(['clientes' => 'cliente']);
-Route::post('clientes/{cliente}/movimiento', [ClienteController::class, 'registrarMovimiento'])
-     ->name('clientes.movimiento');
+    // Dashboard Principal (Pantalla de inicio)
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
-// Rutas de Ventas del Día y Punto de Cobro
-Route::resource('ventas', VentaController::class)
-     ->parameters(['ventas' => 'venta'])
-     ->only(['index', 'create', 'store', 'show', 'destroy']);
+    // Rutas de Productos (Inventario)
+    Route::resource('productos', ProductoController::class)
+         ->parameters(['productos' => 'producto'])
+         ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
-// Rutas de Proveedores
-Route::resource('proveedores', ProveedorController::class)
-     ->parameters(['proveedores' => 'proveedor']);
+    // Rutas de Clientes y Fiados (Cuentas Corrientes)
+    Route::resource('clientes', ClienteController::class)
+         ->parameters(['clientes' => 'cliente']);
+    Route::post('clientes/{cliente}/movimiento', [ClienteController::class, 'registrarMovimiento'])
+         ->name('clientes.movimiento');
 
-// Rutas de Reportes y Rentabilidad
-Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
-Route::get('reportes/reposicion-imprimir', [ReporteController::class, 'imprimirReposicion'])->name('reportes.reposicion.imprimir');
+    // Rutas de Ventas del Día y Punto de Cobro
+    Route::resource('ventas', VentaController::class)
+         ->parameters(['ventas' => 'venta'])
+         ->only(['index', 'create', 'store', 'show', 'destroy']);
+
+    // Rutas de Proveedores
+    Route::resource('proveedores', ProveedorController::class)
+         ->parameters(['proveedores' => 'proveedor']);
+
+    // Rutas de Reportes y Rentabilidad
+    Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('reportes/reposicion-imprimir', [ReporteController::class, 'imprimirReposicion'])->name('reportes.reposicion.imprimir');
+});
