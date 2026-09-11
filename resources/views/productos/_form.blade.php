@@ -41,7 +41,19 @@
         @error('id_categoria') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
     </div>
 
-    <div></div>
+    <div>
+        <label class="{{ $etiqueta }}">Proveedor (Opcional)</label>
+        <select name="id_proveedor" class="{{ $errors->has('id_proveedor') ? $campoError : $campo }}">
+            <option value="">Sin proveedor asignado</option>
+            @foreach ($proveedores as $proveedor)
+                <option value="{{ $proveedor->id_proveedor }}"
+                    @selected(old('id_proveedor', $producto->id_proveedor ?? '') == $proveedor->id_proveedor)>
+                    {{ $proveedor->empresa }}
+                </option>
+            @endforeach
+        </select>
+        @error('id_proveedor') <p class="mt-1.5 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
+    </div>
 
     <div>
         <label class="{{ $etiqueta }}">Precio de compra</label>

@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\ProveedorController;
 
 // Dashboard Principal (Pantalla de inicio)
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -25,3 +26,7 @@ Route::post('clientes/{cliente}/movimiento', [ClienteController::class, 'registr
 Route::resource('ventas', VentaController::class)
      ->parameters(['ventas' => 'venta'])
      ->only(['index', 'create', 'store', 'show', 'destroy']);
+
+// Rutas de Proveedores
+Route::resource('proveedores', ProveedorController::class)
+     ->parameters(['proveedores' => 'proveedor']);

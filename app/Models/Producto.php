@@ -12,7 +12,7 @@ class Producto extends Model
         'nombre', 'codigo', 'descripcion',
         'precio_compra', 'precio_venta',
         'stock', 'stock_minimo', 'stock_critico',
-        'id_categoria',
+        'id_categoria', 'id_proveedor',
     ];
 
     // Le decimos a Eloquent que trate estos campos como decimales de 2 dígitos,
@@ -25,8 +25,13 @@ class Producto extends Model
     // Relación: un producto pertenece a una categoría
     public function categoria()
     {
-        // belongsTo(Modelo, clave_foránea_en_esta_tabla, clave_en_la_tabla_relacionada)
         return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
+    }
+
+    // Relación: un producto es provisto por un proveedor
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'id_proveedor', 'id_proveedor');
     }
 
     // Este es un "accessor": crea un campo virtual $producto->estado_stock

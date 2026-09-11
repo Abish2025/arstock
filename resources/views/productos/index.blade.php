@@ -72,6 +72,7 @@
                     <th class="px-6 py-4">Categoría</th>
                     <th class="px-6 py-4 text-right">Precio Venta</th>
                     <th class="px-6 py-4">Stock</th>
+                    <th class="px-6 py-4">Proveedor</th>
                     <th class="px-6 py-4 text-right">Acciones</th>
                 </tr>
             </thead>
@@ -97,6 +98,15 @@
                                     {{ $badge['label'] }}
                                 </span>
                             </div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 text-xs">
+                            @if ($producto->proveedor)
+                                <a href="{{ route('proveedores.show', $producto->proveedor) }}" class="font-medium text-slate-800 hover:text-emerald-600 transition-colors">
+                                    {{ $producto->proveedor->empresa }}
+                                </a>
+                            @else
+                                <span class="text-slate-400">—</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-2">
