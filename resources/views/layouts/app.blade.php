@@ -84,15 +84,13 @@
                     </a>
 
                     {{-- Reportes --}}
-                    <a href="#"
-                       class="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/40 transition-all duration-150 group">
-                        <div class="flex items-center gap-3">
-                            <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
-                            </svg>
-                            Reportes
-                        </div>
-                        <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/50">Pronto</span>
+                    <a href="{{ route('reportes.index') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+                              {{ request()->routeIs('reportes.*') ? 'bg-slate-800/90 text-white shadow-sm ring-1 ring-white/10' : 'text-slate-400 hover:text-white hover:bg-slate-800/40' }}">
+                        <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+                        </svg>
+                        Reportes
                     </a>
                 </nav>
             </div>

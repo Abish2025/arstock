@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ReporteController;
 
 // Dashboard Principal (Pantalla de inicio)
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -30,3 +31,7 @@ Route::resource('ventas', VentaController::class)
 // Rutas de Proveedores
 Route::resource('proveedores', ProveedorController::class)
      ->parameters(['proveedores' => 'proveedor']);
+
+// Rutas de Reportes y Rentabilidad
+Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
+Route::get('reportes/reposicion-imprimir', [ReporteController::class, 'imprimirReposicion'])->name('reportes.reposicion.imprimir');
