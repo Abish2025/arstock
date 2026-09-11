@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,9 +19,11 @@ class DashboardController extends Controller
         $valorInventario = Producto::select(DB::raw('COALESCE(SUM(stock * precio_compra), 0) as total'))
             ->value('total') ?? 0;
 
-        // Métricas de ventas y clientes (valores iniciales representativos del negocio)
+        // Métricas reales de clientes
+        $totalClientes = Cliente::count();
+
+        // Métricas de ventas (valores iniciales representativos del negocio)
         $ventasTotales = 328000;
-        $totalClientes = 892;
         $margenGanancia = 24.8;
 
         // Datos para los gráficos de Chart.js
