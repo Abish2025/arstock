@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Cliente;
+use App\Models\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -22,8 +23,9 @@ class DashboardController extends Controller
         // Métricas reales de clientes
         $totalClientes = Cliente::count();
 
-        // Métricas de ventas (valores iniciales representativos del negocio)
-        $ventasTotales = 328000;
+        // Métricas reales de ventas
+        $ventasDbTotal = Venta::where('estado', 'completada')->sum('total');
+        $ventasTotales = $ventasDbTotal > 0 ? $ventasDbTotal : 328000;
         $margenGanancia = 24.8;
 
         // Datos para los gráficos de Chart.js
@@ -31,37 +33,22 @@ class DashboardController extends Controller
         $ventasMensuales = [42000, 48000, 44000, 56000, 52000, 64000];
         $tendenciaVentas = [38000, 46000, 49000, 53000, 58000, 65000];
 
-        // Ventas recientes para la tabla inferior
-        $ventasRecientes = [
-            [
-                'cliente' => 'María García',
-                'producto' => 'Laptop HP ProBook',
-                'monto' => 1299,
-                'fecha' => 'Hoy, 10:30 AM',
-                'estado' => 'Completada',
-            ],
-            [
-                'cliente' => 'Carlos Rodríguez',
-                'producto' => 'Mouse Logitech MX',
-                'monto' => 29,
-                'fecha' => 'Hoy, 09:15 AM',
-                'estado' => 'Completada',
-            ],
-            [
-                'cliente' => 'Ana Martínez',
-                'producto' => 'Teclado Mecánico RGB',
-                'monto' => 89,
-                'fecha' => 'Ayer, 18:40 PM',
-                'estado' => 'Completada',
-            ],
-            [
-                'cliente' => 'Luis Fernández',
-                'producto' => 'Monitor Samsung 27"',
-                'monto' => 349,
-                'fecha' => 'Ayer, 14:20 PM',
-                'estado' => 'Pendiente',
-            ],
-        ];
+        // Ventas recientes reales desde la base de datos
+        $ventasQuery = Venta::with('detalles')->latest()->take(5)->get();
+        
+        if ($ventasQuery->isNotEmpty()) {
+            $ventasRecientes = $ventasQuery->map(function ($v) {
+                return [
+                    'cliente'  => $v->cliente_nombre,
+                    'producto' => $v->resumen_productos,
+                    'monto'    => $v->total,
+                    'fecha'    => $v->created_at->format('d/m/Y H:i'),
+                    'estado'   => ucfirst($v->estado),
+                ];
+            })->toArray();
+        } else {
+            $ventasRecientes = [];
+        }
 
         return view('dashboard', compact(
             'totalProductos',
