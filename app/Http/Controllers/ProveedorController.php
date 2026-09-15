@@ -50,12 +50,14 @@ class ProveedorController extends Controller
         $validated = $request->validate([
             'empresa'     => 'required|min:2|max:100',
             'contacto'    => 'nullable|max:100',
-            'telefono'    => 'nullable|max:25',
+            'telefono'    => ['nullable', 'regex:/^\+?[0-9]{10,14}$/'],
             'email'       => 'nullable|email|max:100',
             'direccion'   => 'nullable|max:255',
             'cuit'        => 'nullable|max:25',
             'dias_visita' => 'nullable|max:100',
             'notas'       => 'nullable|max:500',
+        ], [
+            'telefono.regex' => 'El teléfono debe ser un número válido de Argentina (Ej: 3764123456 o +5493764123456).',
         ]);
 
         Proveedor::create($validated);
@@ -83,12 +85,14 @@ class ProveedorController extends Controller
         $validated = $request->validate([
             'empresa'     => 'required|min:2|max:100',
             'contacto'    => 'nullable|max:100',
-            'telefono'    => 'nullable|max:25',
+            'telefono'    => ['nullable', 'regex:/^\+?[0-9]{10,14}$/'],
             'email'       => 'nullable|email|max:100',
             'direccion'   => 'nullable|max:255',
             'cuit'        => 'nullable|max:25',
             'dias_visita' => 'nullable|max:100',
             'notas'       => 'nullable|max:500',
+        ], [
+            'telefono.regex' => 'El teléfono debe ser un número válido de Argentina (Ej: 3764123456 o +5493764123456).',
         ]);
 
         $proveedor->update($validated);

@@ -78,9 +78,18 @@
                 </p>
             @endif
             @if ($cliente->direccion)
-                <p class="flex justify-between">
+                <p class="flex justify-between items-center gap-2">
                     <span>Dirección:</span>
-                    <span class="font-medium text-slate-700">{{ $cliente->direccion }}</span>
+                    <span class="font-medium text-slate-700 text-right flex items-center justify-end gap-2">
+                        {{ $cliente->direccion }}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($cliente->direccion) }}" target="_blank"
+                           class="inline-flex items-center justify-center h-6 w-6 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors"
+                           title="Ver en Google Maps">
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </a>
+                    </span>
                 </p>
             @endif
             @if ($cliente->notas)
@@ -108,12 +117,14 @@
             <div>
                 <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Monto entregado ($)</label>
                 <input type="number" step="0.01" name="monto" placeholder="Ej: 5000" required
+                       min="0.01" max="99999999.99"
                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
             </div>
 
             <div>
                 <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Concepto / Detalle</label>
                 <input type="text" name="concepto" value="Entrega en efectivo" required
+                       minlength="2" maxlength="255"
                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
             </div>
 
@@ -143,12 +154,14 @@
             <div>
                 <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Monto fiado ($)</label>
                 <input type="number" step="0.01" name="monto" placeholder="Ej: 3200" required
+                       min="0.01" max="99999999.99"
                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-slate-900 focus:ring-1 focus:ring-slate-900">
             </div>
 
             <div>
                 <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Concepto / Detalle</label>
                 <input type="text" name="concepto" value="Compra fiada de almacén" required
+                       minlength="2" maxlength="255"
                        class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 focus:border-slate-900 focus:ring-1 focus:ring-slate-900">
             </div>
 

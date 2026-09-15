@@ -44,11 +44,17 @@ class ClienteController extends Controller
     {
         $validated = $request->validate([
             'nombre'         => 'required|min:2|max:100',
-            'telefono'       => 'nullable|max:25',
+            'telefono'       => ['nullable', 'regex:/^\+?[0-9]{10,14}$/'],
             'direccion'      => 'nullable|max:255',
-            'saldo'          => 'nullable|numeric|min:0',
-            'limite_credito' => 'nullable|numeric|min:0',
+            'saldo'          => ['nullable', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'limite_credito' => ['nullable', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
             'notas'          => 'nullable|max:500',
+        ], [
+            'telefono.regex' => 'El teléfono debe ser un número válido de Argentina (Ej: 3764123456 o +5493764123456).',
+            'saldo.gt'       => 'El saldo inicial debe ser mayor a $0.',
+            'saldo.regex'    => 'Formato de saldo inválido (máximo 2 decimales, sin letras ni negativos).',
+            'limite_credito.gt' => 'El límite de crédito debe ser mayor a $0.',
+            'limite_credito.regex' => 'Formato de límite inválido (máximo 2 decimales, sin letras ni negativos).',
         ]);
 
         $saldoInicial = $validated['saldo'] ?? 0;
@@ -91,10 +97,14 @@ class ClienteController extends Controller
     {
         $validated = $request->validate([
             'nombre'         => 'required|min:2|max:100',
-            'telefono'       => 'nullable|max:25',
+            'telefono'       => ['nullable', 'regex:/^\+?[0-9]{10,14}$/'],
             'direccion'      => 'nullable|max:255',
-            'limite_credito' => 'nullable|numeric|min:0',
+            'limite_credito' => ['nullable', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
             'notas'          => 'nullable|max:500',
+        ], [
+            'telefono.regex' => 'El teléfono debe ser un número válido de Argentina (Ej: 3764123456 o +5493764123456).',
+            'limite_credito.gt' => 'El límite de crédito debe ser mayor a $0.',
+            'limite_credito.regex' => 'Formato de límite inválido (máximo 2 decimales, sin letras ni negativos).',
         ]);
 
         $cliente->update($validated);
@@ -117,8 +127,11 @@ class ClienteController extends Controller
     {
         $validated = $request->validate([
             'tipo'     => 'required|in:fiado,pago',
-            'monto'    => 'required|numeric|min:0.01',
+            'monto'    => ['required', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
             'concepto' => 'required|max:255',
+        ], [
+            'monto.gt'    => 'El monto debe ser mayor a $0.',
+            'monto.regex' => 'Formato de monto inválido (máximo 2 decimales, sin letras ni negativos).',
         ]);
 
         DB::transaction(function () use ($cliente, $validated) {

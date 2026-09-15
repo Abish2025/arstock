@@ -57,7 +57,18 @@
     <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Días de Reparto</span>
         <p class="mt-2 text-sm font-bold text-slate-800">{{ $proveedor->dias_visita ?? 'No especificado' }}</p>
-        <p class="text-xs text-slate-500">{{ $proveedor->direccion ?? 'Sin dirección' }}</p>
+        <div class="mt-1 flex items-center gap-2">
+            <p class="text-xs text-slate-500">{{ $proveedor->direccion ?? 'Sin dirección' }}</p>
+            @if ($proveedor->direccion)
+                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($proveedor->direccion) }}" target="_blank"
+                   class="inline-flex items-center justify-center h-5 w-5 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors"
+                   title="Ver en Google Maps">
+                    <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </a>
+            @endif
+        </div>
     </div>
     <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Productos en Catálogo</span>

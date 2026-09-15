@@ -94,8 +94,8 @@ class ProductoController extends Controller
                 Rule::unique('productos', 'codigo')->ignore($idProducto, 'id_producto'),
             ],
             'descripcion'    => 'nullable|max:255',
-            'precio_compra'  => 'required|numeric|min:0',
-            'precio_venta'   => 'required|numeric|min:0|gte:precio_compra',
+            'precio_compra'  => ['required', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'precio_venta'   => ['required', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/', 'gte:precio_compra'],
             'stock'          => 'required|integer|min:0',
             'stock_minimo'   => 'required|integer|min:0',
             'stock_critico'  => 'required|integer|min:0|lte:stock_minimo',
@@ -103,6 +103,10 @@ class ProductoController extends Controller
             'id_proveedor'   => 'nullable|exists:proveedores,id_proveedor',
         ], [
             'precio_venta.gte'  => 'El precio de venta no puede ser menor al de compra.',
+            'precio_compra.gt'  => 'El precio de compra debe ser mayor a $0.',
+            'precio_venta.gt'   => 'El precio de venta debe ser mayor a $0.',
+            'precio_compra.regex' => 'Formato inválido en precio de compra (máximo 2 decimales, sin letras ni negativos).',
+            'precio_venta.regex'  => 'Formato inválido en precio de venta (máximo 2 decimales, sin letras ni negativos).',
             'stock_critico.lte' => 'El stock crítico no puede ser mayor al stock mínimo.',
         ]);
     }
