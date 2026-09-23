@@ -165,6 +165,12 @@ class VentaController extends Controller
     // DELETE /ventas/{venta} → Anular venta (restituye stock y ajusta deuda)
     public function destroy(Venta $venta)
     {
+        // No se puede anular una venta que ya está anulada
+        if ($venta->estado === 'anulada') {
+         return redirect()->route('ventas.index')
+                         ->with('error', "La venta {$venta->codigo} ya fue anulada anteriormente.");
+        }
+
         DB::transaction(function () use ($venta) {
             // 1. Devolver el stock a cada producto
             foreach ($venta->detalles as $detalle) {
@@ -183,7 +189,7 @@ class VentaController extends Controller
 
                 MovimientoCuentaCorriente::create([
                     'id_cliente'     => $cliente->id_cliente,
-                    'tipo'           => 'pago',
+                    'tipo'           => 'anulacion',
                     'monto'          => $venta->total,
                     'concepto'       => "Anulación de venta fiada {$venta->codigo}",
                     'saldo_anterior' => $saldoAnterior,
@@ -191,10 +197,10 @@ class VentaController extends Controller
                 ]);
             }
 
-            $venta->delete();
+            // 3. Cambiar estado a "anulada" en lugar de eliminar
+            $venta->update(['estado' => 'anulada']);
         });
 
         return redirect()->route('ventas.index')
-                         ->with('success', "Venta {$venta->codigo} anulada y stock restituido al inventario.");
-    }
+                     ->with('success', "Venta {$venta->codigo} anulada. El stock fue restituido al inventario.");
 }
