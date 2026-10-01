@@ -15,11 +15,13 @@ class DetalleVenta extends Model
         'producto_nombre',
         'cantidad',
         'precio_unitario',
+        'costo_unitario',
         'subtotal',
     ];
 
     protected $casts = [
         'precio_unitario' => 'decimal:2',
+        'costo_unitario' => 'decimal:2',
         'subtotal' => 'decimal:2',
         'cantidad' => 'integer',
     ];

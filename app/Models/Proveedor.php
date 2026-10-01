@@ -25,4 +25,15 @@ class Proveedor extends Model
     {
         return $this->hasMany(Producto::class, 'id_proveedor', 'id_proveedor');
     }
+
+    // Relación: Compras o recepciones de mercadería realizadas al proveedor
+    public function compras()
+    {
+        return $this->hasMany(Compra::class, 'id_proveedor', 'id_proveedor')->latest('fecha');
+    }
+
+    public function tieneOperaciones(): bool
+    {
+        return $this->productos()->exists() || $this->compras()->exists();
+    }
 }

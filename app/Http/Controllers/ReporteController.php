@@ -8,41 +8,55 @@ use App\Models\Venta;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\Cliente;
+use App\Models\MovimientoStock;
+use Illuminate\Support\Facades\DB;
 
 class ReporteController extends Controller
 {
     public function index(Request $request)
     {
         $periodo = $request->get('periodo', 'mes');
+        $fechaDesdeInput = $request->get('fecha_desde');
+        $fechaHastaInput = $request->get('fecha_hasta');
 
-        // Determinamos la fecha de inicio según el filtro seleccionado
-        $fechaInicio = match ($periodo) {
-            'hoy'    => Carbon::today(),
-            'semana' => Carbon::now()->subDays(7)->startOfDay(),
-            'mes'    => Carbon::now()->startOfMonth(),
-            'anio'   => Carbon::now()->startOfYear(),
-            'todo'   => null,
-            default  => Carbon::now()->startOfMonth(),
-        };
+        $fechaInicio = null;
+        $fechaFin = null;
+
+        if ($periodo === 'personalizado' && $fechaDesdeInput) {
+            $fechaInicio = Carbon::parse($fechaDesdeInput)->startOfDay();
+            $fechaFin = $fechaHastaInput ? Carbon::parse($fechaHastaInput)->endOfDay() : Carbon::now()->endOfDay();
+        } else {
+            match ($periodo) {
+                'hoy'    => [$fechaInicio = Carbon::today()->startOfDay(), $fechaFin = Carbon::today()->endOfDay()],
+                'ayer'   => [$fechaInicio = Carbon::yesterday()->startOfDay(), $fechaFin = Carbon::yesterday()->endOfDay()],
+                'semana' => [$fechaInicio = Carbon::now()->subDays(7)->startOfDay(), $fechaFin = Carbon::now()->endOfDay()],
+                'mes'    => [$fechaInicio = Carbon::now()->startOfMonth(), $fechaFin = Carbon::now()->endOfDay()],
+                'anio'   => [$fechaInicio = Carbon::now()->startOfYear(), $fechaFin = Carbon::now()->endOfDay()],
+                'todo'   => [$fechaInicio = null, $fechaFin = null],
+                default  => [$fechaInicio = Carbon::now()->startOfMonth(), $fechaFin = Carbon::now()->endOfDay()],
+            };
+        }
 
         // Query base para ventas válidas (excluyendo anuladas)
         $ventasQuery = Venta::where('estado', '!=', 'anulada');
         if ($fechaInicio) {
             $ventasQuery->where('created_at', '>=', $fechaInicio);
         }
+        if ($fechaFin) {
+            $ventasQuery->where('created_at', '<=', $fechaFin);
+        }
 
         $ventasIds = (clone $ventasQuery)->pluck('id_venta');
         $totalIngresos = (float) (clone $ventasQuery)->sum('total');
         $cantidadVentas = (clone $ventasQuery)->count();
 
-        // 1. Cálculo de Rentabilidad (Costo de Mercadería y Margen Bruto)
-        $detalles = DetalleVenta::whereIn('id_venta', $ventasIds)
-            ->with('producto')
-            ->get();
+        // 1. Rentabilidad y Ganancias reales con Costo Histórico (CMV)
+        $detalles = DetalleVenta::whereIn('id_venta', $ventasIds)->with('producto')->get();
 
         $totalCosto = 0.0;
         foreach ($detalles as $detalle) {
-            $costoUnitario = $detalle->producto ? (float) $detalle->producto->precio_compra : 0.0;
+            $costoUnitario = (float) ($detalle->costo_unitario > 0 ? $detalle->costo_unitario : ($detalle->producto?->precio_compra ?? 0));
             $totalCosto += ($costoUnitario * $detalle->cantidad);
         }
 
@@ -68,7 +82,7 @@ class ReporteController extends Controller
             ->limit(10)
             ->get();
 
-        // 4. Lista de Productos con Reposición Urgente (Stock bajo o crítico)
+        // 4. Lista de Reposición Urgente a Proveedores (Stock bajo o crítico)
         $productosReponer = Producto::with(['categoria', 'proveedor'])
             ->where(function ($q) {
                 $q->whereColumn('stock', '<=', 'stock_minimo')
@@ -77,7 +91,6 @@ class ReporteController extends Controller
             ->orderBy('stock')
             ->get()
             ->map(function ($producto) {
-                // Cálculo de sugerencia de reposición
                 $sugerido = max(1, ($producto->stock_minimo * 2) - $producto->stock);
                 $costoEstimado = $sugerido * (float) $producto->precio_compra;
                 $producto->sugerido_reponer = $sugerido;
@@ -88,8 +101,16 @@ class ReporteController extends Controller
         $totalInversionReposicion = $productosReponer->sum('costo_reposicion');
         $articulosCriticosCount = $productosReponer->count();
 
+        // 5. Clientes con Deuda (Cuentas Corrientes activas)
+        $clientesDeudores = Cliente::where('saldo', '>', 0)
+            ->orderByDesc('saldo')
+            ->get();
+        $totalDeudaClientes = $clientesDeudores->sum('saldo');
+
         return view('reportes.index', compact(
             'periodo',
+            'fechaDesdeInput',
+            'fechaHastaInput',
             'totalIngresos',
             'cantidadVentas',
             'totalCosto',
@@ -99,11 +120,13 @@ class ReporteController extends Controller
             'topProductos',
             'productosReponer',
             'totalInversionReposicion',
-            'articulosCriticosCount'
+            'articulosCriticosCount',
+            'clientesDeudores',
+            'totalDeudaClientes'
         ));
     }
 
-    // Vista de impresión limpia (para proveedores o compras)
+    // Vista de impresión limpia (para reposición de mercadería con proveedores)
     public function imprimirReposicion()
     {
         $productosReponer = Producto::with(['categoria', 'proveedor'])

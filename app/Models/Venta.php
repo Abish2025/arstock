@@ -10,17 +10,36 @@ class Venta extends Model
 
     protected $fillable = [
         'codigo',
+        'id_user',
+        'id_caja',
         'id_cliente',
         'cliente_nombre',
         'metodo_pago',
         'total',
+        'monto_recibido',
+        'vuelto',
+        'referencia_pago',
         'estado',
         'notas',
     ];
 
     protected $casts = [
         'total' => 'decimal:2',
+        'monto_recibido' => 'decimal:2',
+        'vuelto' => 'decimal:2',
     ];
+
+    // Relación con el usuario/cajero que registró la venta
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    // Relación con el turno/caja en el que se realizó la venta
+    public function caja()
+    {
+        return $this->belongsTo(Caja::class, 'id_caja', 'id_caja');
+    }
 
     // Relación con el cliente (si no fue Consumidor Final)
     public function cliente()
@@ -56,5 +75,10 @@ class Venta extends Model
     public function getEsFiadoAttribute(): bool
     {
         return $this->metodo_pago === 'fiado';
+    }
+
+    public function getEstaAnuladaAttribute(): bool
+    {
+        return $this->estado === 'anulada';
     }
 }

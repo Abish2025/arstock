@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Proveedor;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProveedorController extends Controller
 {
@@ -38,15 +39,23 @@ class ProveedorController extends Controller
         ));
     }
 
-    // GET /proveedores/create → Formulario de alta
+    // GET /proveedores/create → Formulario de alta (Solo Admin)
     public function create()
     {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Solo un administrador puede agregar proveedores.');
+        }
+
         return view('proveedores.create');
     }
 
-    // POST /proveedores → Guardar nuevo proveedor
+    // POST /proveedores → Guardar nuevo proveedor (Solo Admin)
     public function store(Request $request)
     {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Solo un administrador puede agregar proveedores.');
+        }
+
         $validated = $request->validate([
             'empresa'     => 'required|min:2|max:100',
             'contacto'    => 'nullable|max:100',
@@ -69,19 +78,27 @@ class ProveedorController extends Controller
     // GET /proveedores/{proveedor} → Ficha y catálogo de productos provistos
     public function show(Proveedor $proveedor)
     {
-        $proveedor->load(['productos.categoria']);
+        $proveedor->load(['productos.categoria', 'compras']);
         return view('proveedores.show', compact('proveedor'));
     }
 
-    // GET /proveedores/{proveedor}/edit → Formulario de edición
+    // GET /proveedores/{proveedor}/edit → Formulario de edición (Solo Admin)
     public function edit(Proveedor $proveedor)
     {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Solo un administrador puede editar proveedores.');
+        }
+
         return view('proveedores.edit', compact('proveedor'));
     }
 
-    // PUT /proveedores/{proveedor} → Actualizar datos
+    // PUT /proveedores/{proveedor} → Actualizar datos (Solo Admin)
     public function update(Request $request, Proveedor $proveedor)
     {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Solo un administrador puede editar proveedores.');
+        }
+
         $validated = $request->validate([
             'empresa'     => 'required|min:2|max:100',
             'contacto'    => 'nullable|max:100',
@@ -101,12 +118,22 @@ class ProveedorController extends Controller
                          ->with('success', 'Datos del proveedor actualizados.');
     }
 
-    // DELETE /proveedores/{proveedor} → Eliminar proveedor
+    // DELETE /proveedores/{proveedor} → Eliminar proveedor con verificación de integridad (Solo Admin)
     public function destroy(Proveedor $proveedor)
     {
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Solo un administrador puede eliminar proveedores.');
+        }
+
+        // Regla de integridad: No eliminar si tiene productos asignados o compras registradas
+        if ($proveedor->tieneOperaciones()) {
+            return back()->with('error', "No se puede eliminar el proveedor '{$proveedor->empresa}' porque tiene productos o ingresos de mercadería asociados en el historial.");
+        }
+
+        $empresa = $proveedor->empresa;
         $proveedor->delete();
 
         return redirect()->route('proveedores.index')
-                         ->with('success', 'Proveedor eliminado correctamente.');
+                         ->with('success', "Proveedor '{$empresa}' eliminado correctamente.");
     }
 }

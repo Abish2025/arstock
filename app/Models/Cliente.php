@@ -29,6 +29,12 @@ class Cliente extends Model
                     ->orderByDesc('created_at');
     }
 
+    // Relación: Ventas asociadas a este cliente
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class, 'id_cliente', 'id_cliente');
+    }
+
     // Helper: Saber si el cliente debe dinero
     public function getTieneDeudaAttribute(): bool
     {
@@ -47,5 +53,10 @@ class Cliente extends Model
         }
 
         return 'con_deuda';
+    }
+
+    public function tieneOperaciones(): bool
+    {
+        return $this->ventas()->exists() || $this->movimientos()->exists();
     }
 }

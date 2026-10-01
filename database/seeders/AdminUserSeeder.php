@@ -10,12 +10,27 @@ class AdminUserSeeder extends Seeder
 {
     public function run()
     {
-        // Evita crear duplicados si ya existe
+        // Administrador principal
         User::updateOrCreate(
             ['email' => 'admin@arstock.com'],
             [
-                'name' => 'admin',
+                'name'     => 'Administrador',
                 'password' => Hash::make('arstock123'),
+                'rol'      => 'admin',
+                'activo'   => true,
+                'telefono' => '1134567890',
+            ]
+        );
+
+        // Cajero / Empleado de prueba
+        User::updateOrCreate(
+            ['email' => 'cajero@arstock.com'],
+            [
+                'name'     => 'Cajero de Turno',
+                'password' => Hash::make('arstock123'),
+                'rol'      => 'cajero',
+                'activo'   => true,
+                'telefono' => '1198765432',
             ]
         );
     }
