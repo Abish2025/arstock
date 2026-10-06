@@ -101,7 +101,7 @@
         const container = document.getElementById('itemsContainer');
         const filaId = `fila_${filaIndex}`;
 
-        let opcionesHtml = '<option value="">Selecciona producto...</option>';
+        let opcionesHtml = '<option value="">Selecciona producto..</option>';
         catalogoProductos.forEach(p => {
             const selected = (p.id_producto == idProducto) ? 'selected' : '';
             opcionesHtml += `<option value="${p.id_producto}" data-costo="${p.precio_compra}" ${selected}>${p.nombre} (Stock actual: ${p.stock})</option>`;
