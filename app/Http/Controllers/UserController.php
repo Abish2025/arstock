@@ -69,10 +69,12 @@ class UserController extends Controller
         $validated['password'] = Hash::make($validated['password']);
         $validated['activo']   = $request->has('activo');
 
-        User::create($validated);
+        $user = User::create($validated);
+
+        $user->sendEmailVerificationNotification();
 
         return redirect()->route('usuarios.index')
-                         ->with('success', "Usuario {$validated['name']} creado exitosamente.");
+                         ->with('success', "Usuario {$validated['name']} creado exitosamente. Se envió un correo de verificación a {$validated['email']}.");
     }
 
     // GET /usuarios/{user}/edit
