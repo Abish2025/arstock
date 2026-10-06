@@ -20,15 +20,10 @@
             <div>
                 {{-- Encabezado del Sistema --}}
                 <div class="px-6 py-6 border-b border-slate-800/80 flex items-center justify-between">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                        <div class="h-9 w-9 rounded-lg bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 font-bold text-base tracking-wide">
-                            AR
-                        </div>
-                        <div>
-                            <span class="text-base font-bold tracking-tight text-white block leading-tight">ArStock</span>
-                            <span class="text-[11px] font-medium text-slate-400">Sistema de Gestión</span>
-                        </div>
-                    </a>
+                    <a href="{{ route('dashboard') }}" class="flex items-center">
+                        <img src="{{ asset('images/arstock-logo.png') }}" alt="ArStock Manager"
+                        class="h-10 w-auto brightness-0 invert">
+                        </a>
                 </div>
 
                 {{-- Navegación --}}

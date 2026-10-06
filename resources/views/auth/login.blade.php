@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('images/arstock-icon.png') }}">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -23,6 +24,13 @@
         }
 
         /* ===== PANEL IZQUIERDO ===== */
+        
+        .logo img { 
+            height: 44px; 
+            width: auto; 
+            display: block; 
+        }
+
         .left-panel {
             width: 42%;
             background: #ffffff;
@@ -40,29 +48,6 @@
             position: absolute;
             top: 2.5rem;
             left: 4rem;
-        }
-
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: #0f1b2d;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon svg {
-            width: 18px;
-            height: 18px;
-            color: #2dd4bf;
-        }
-
-        .logo-text {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1e293b;
-            letter-spacing: -0.02em;
         }
 
         .avatar {
@@ -343,9 +328,8 @@
 
         <div class="logo">
             <div class="logo-icon">
-                <img src="={{ asset('public/images/arstock-logo.png') }}" alt="ARStock Manager">
+                <img src="{{ asset('images/arstock-logo.png') }}" alt="ARStock Manager">
             </div>
-            <span class="logo-text">ARStock</span>
         </div>
 
         <div class="avatar">
